@@ -1,5 +1,0 @@
-
-class Store {
-  public:
-    Store();
-};
