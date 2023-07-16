@@ -1,0 +1,90 @@
+#!/bin/bash
+# PROJECT WRAPPER
+
+function _print_line()
+{
+    local pattern=$1
+    local cols=$(tput cols)
+    local len=$(echo "$pattern" | wc -c) # "" are required to count spaces as well
+    len=$((len - 1))
+    local times=$((cols / len))
+    local rem=$((cols % len))
+    for i in $(seq 1 $times); do echo -n "$pattern"; done
+    for i in $(seq 1 $rem); do echo -n "${pattern:$(($i - 1)):1}"; done
+    echo ""
+}
+
+function _print_title()
+{
+    local title=$1
+    local pattern=$2
+
+    local cols=$(tput cols)
+
+    local title_len=$(echo "$title" | wc -c)
+    titile_len=$((title_len - 1)) # remove \0
+    local pattern_len=$(echo "$pattern" | wc -c) 
+    pattern_len=$((pattern_len - 1)) # remove \0
+
+    local pattern_side_len=$(( (cols - title_len) / 2 ))
+    local pattern_side_times=$(( pattern_side_len / pattern_len ))
+    local pattern_side_rem=$(( pattern_side_len % pattern_len ))
+    for i in $(seq 1 $pattern_side_times); do echo -n "$pattern"; done
+    for i in $(seq 1 $pattern_side_rem); do echo -n "${pattern:$(($i - 1)):1}"; done
+    echo -n "$title"
+    for i in $(seq 1 $pattern_side_times); do echo -n "$pattern"; done
+    if [ $(( (cols - title_len) % 2 )) -eq 0 ]; then
+        local end_needed=1
+    fi
+    for i in $(seq 1 $((pattern_side_rem + end_needed))); do echo -n "${pattern:$(($i - 1)):1}"; done
+    echo ""
+}
+
+function _print_fat_title()
+{
+    _print_line "$2"
+    _print_title "$1" "$2"
+    _print_line "$2"
+}
+
+
+function init()
+{
+    test -d build || mkdir build
+    _print_fat_title " cmake -S . -B build " "="
+    cmake -S . -B build
+    _print_fat_title " cmake --build build " "="
+    cmake --build build
+}
+
+function build()
+{
+    _print_fat_title " cmake --build build " "="
+    cmake --build build
+}
+
+function run()
+{
+    _print_fat_title " cmake --build build " "="
+    cmake --build build
+    _print_fat_title " running example " "="
+    ./build/example/pizone_example
+    _print_fat_title " DONE " "="
+}
+
+function clean()
+{
+    _print_fat_title " cleaning " "="
+    rm -rf build
+    rm -rf CMakeFiles
+    rm -rf _deps
+}
+
+for var in "$@"
+do
+    $var
+done
+
+if [ $? -ne 0 ]; then
+    echo "Error: '$1'"
+fi
