@@ -1,0 +1,6 @@
+build/
+libs/
+.vscode/
+_deps/
+CMakeFiles/
+.cache/
