@@ -50,5 +50,6 @@ add_subdirectory(src)
 # #################### #
 # Build Example        #
 # #################### #
+set(PROJECT_LIB ${PROJECT_NAME})
 set(PROJECT_EXMAPLE ${PROJECT_NAME}_example)
 add_subdirectory(example)
