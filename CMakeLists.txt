@@ -26,12 +26,6 @@ FetchContent_MakeAvailable(googletest boost)
 # Define Dependencies  #
 # #################### #
 add_compile_definitions(BOOST_THREAD_PROVIDES_FUTURE) # enable boost::future
-set(DEPENDENCY_LIBS
-    Boost::asio
-    Boost::date_time
-    Boost::thread
-    pthread
-)
 
 # #################### #
 # Define Library dirs  #
